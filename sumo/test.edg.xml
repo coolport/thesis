@@ -1,0 +1,12 @@
+
+<edges>
+    <edge id="N_to_center" from="N" to="center" priority="78" numLanes="3" speed="16.67" />
+    <edge id="S_to_center" from="S" to="center" priority="78" numLanes="3" speed="16.67" />
+    <edge id="E_to_center" from="E" to="center" priority="78" numLanes="3" speed="16.67" />
+    <edge id="W_to_center" from="W" to="center" priority="78" numLanes="3" speed="16.67" />
+
+    <edge id="center_to_N" from="center" to="N" priority="78" numLanes="3" speed="16.67" />
+    <edge id="center_to_S" from="center" to="S" priority="78" numLanes="3" speed="16.67" />
+    <edge id="center_to_E" from="center" to="E" priority="78" numLanes="3" speed="16.67" />
+    <edge id="center_to_W" from="center" to="W" priority="78" numLanes="3" speed="16.67" />
+</edges>

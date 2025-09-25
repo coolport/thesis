@@ -1,0 +1,27 @@
+
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" maxSpeed="70"/>
+
+    <!-- Straight Routes -->
+    <route id="route_N_S" edges="N_to_center center_to_S" />
+    <route id="route_S_N" edges="S_to_center center_to_N" />
+    <route id="route_E_W" edges="E_to_center center_to_W" />
+    <route id="route_W_E" edges="W_to_center center_to_E" />
+
+    <!-- Turning Routes -->
+    <route id="route_N_W" edges="N_to_center center_to_W" /> <!-- Right Turn -->
+    <route id="route_S_E" edges="S_to_center center_to_E" /> <!-- Right Turn -->
+    <route id="route_E_N" edges="E_to_center center_to_N" /> <!-- Left Turn -->
+    <route id="route_W_S" edges="W_to_center center_to_S" /> <!-- Left Turn -->
+
+    <!-- Flows (1 car every 4s for straight, every 9s for turns) -->
+    <flow id="flow_N_S" type="car" route="route_N_S" begin="0" end="3600" period="4" />
+    <flow id="flow_S_N" type="car" route="route_S_N" begin="0" end="3600" period="4" />
+    <flow id="flow_E_W" type="car" route="route_E_W" begin="0" end="3600" period="5" />
+    <flow id="flow_W_E" type="car" route="route_W_E" begin="0" end="3600" period="5" />
+
+    <flow id="flow_N_W" type="car" route="route_N_W" begin="0" end="3600" period="9" />
+    <flow id="flow_S_E" type="car" route="route_S_E" begin="0" end="3600" period="9" />
+    <flow id="flow_E_N" type="car" route="route_E_N" begin="0" end="3600" period="8" />
+    <flow id="flow_W_S" type="car" route="route_W_S" begin="0" end="3600" period="8" />
+</routes>
