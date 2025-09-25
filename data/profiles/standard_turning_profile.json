@@ -1,0 +1,22 @@
+{
+    "S": {
+        "straight": 0.9234,
+        "left": 0.0696,
+        "right": 0.0069
+    },
+    "N": {
+        "straight": 0.0,
+        "left": 0.9224,
+        "right": 0.0776
+    },
+    "E": {
+        "straight": 1.0,
+        "left": 0.0,
+        "right": 0.0
+    },
+    "W": {
+        "straight": 0,
+        "left": 0,
+        "right": 0
+    }
+}
