@@ -75,21 +75,30 @@ def optimize_model_pytorch(agent_type, policy_net, target_net, memory, optimizer
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
 
-# --- Main Training Function ---
 def main(args):
+    # --- Path Setup for Cross-Platform Compatibility ---
+    # Get the absolute path to the project root
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     # --- Environment and Agent Initialization ---
     cfg_name = 'medium_traffic'
-    config.SUMO_CONFIGS[cfg_name] = f'/home/aidan/thesis/sumo/{cfg_name}.sumocfg'
+    sumo_config_path = os.path.join(project_root, config.SUMO_CONFIG_DIR, f'{cfg_name}.sumocfg')
 
-    demand_curve_files = {
+    demand_curve_files_relative = {
         'N': 'data/profiles/demand_curve_dummy.json',
         'S': 'data/profiles/demand_curve_dummy.json',
         'E': 'data/profiles/demand_curve_dummy.json',
         'W': 'data/profiles/demand_curve_dummy.json',
     }
+    # Construct absolute paths for demand curve files
+    demand_curve_files_absolute = {
+        direction: os.path.join(project_root, path)
+        for direction, path in demand_curve_files_relative.items()
+    }
+
     env = SumoEnvironment(
-        sumo_config_file=config.SUMO_CONFIGS[cfg_name], 
-        demand_curve_files=demand_curve_files, 
+        sumo_config_file=sumo_config_path,
+        demand_curve_files=demand_curve_files_absolute,
         use_gui=args.gui
     )
 

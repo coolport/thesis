@@ -13,10 +13,8 @@ TAU = 0.005            # Update rate of the target network
 LR = 1e-4              # Learning rate of the AdamW optimizer
 
 # --- Environment Configuration ---
-# Use a dictionary to easily manage different scenarios
-SUMO_CONFIGS = {
-    'test': '/home/aidan/thesis/sumo/test.sumocfg'
-}
+# Define the directory for SUMO configurations
+SUMO_CONFIG_DIR = 'sumo'
 
 # --- Agent Configuration ---
 # Define the size of the state and action space
