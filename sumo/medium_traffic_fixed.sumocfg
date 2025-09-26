@@ -1,0 +1,11 @@
+
+<configuration>
+    <input>
+        <net-file value="test.net.xml"/>
+        <route-files value="medium_traffic.rou.xml"/>
+        <additional-files value="fixed_time.add.xml,detectors.add.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+    </time>
+</configuration>

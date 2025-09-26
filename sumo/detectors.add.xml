@@ -1,0 +1,7 @@
+
+<additional>
+    <inductionLoop id="det_N" lane="center_to_N_0" pos="-50" freq="60" file="throughput.out.xml"/>
+    <inductionLoop id="det_S" lane="center_to_S_0" pos="-50" freq="60" file="throughput.out.xml"/>
+    <inductionLoop id="det_E" lane="center_to_E_0" pos="-50" freq="60" file="throughput.out.xml"/>
+    <inductionLoop id="det_W" lane="center_to_W_0" pos="-50" freq="60" file="throughput.out.xml"/>
+</additional>
