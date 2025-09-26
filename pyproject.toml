@@ -4,4 +4,8 @@ version = "0.1.0"
 description = " Zero-Shot Traffic Signal Control via Prophet Forecasting and Deep Q-Networks in SUMO Simulated Environments "
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["sumolib>=1.24.0", "traci>=1.24.0"]
+dependencies = [
+    "sumolib>=1.24.0",
+    "torch>=2.8.0",
+    "traci>=1.24.0",
+]
