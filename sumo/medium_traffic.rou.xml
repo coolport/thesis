@@ -1,4 +1,3 @@
-
 <routes>
     <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" maxSpeed="70"/>
 
@@ -14,7 +13,7 @@
     <route id="route_E_N" edges="E_to_center center_to_N" /> <!-- Left Turn -->
     <route id="route_W_S" edges="W_to_center center_to_S" /> <!-- Left Turn -->
 
-    <!-- Flows (1 car every 4s for straight, every 9s for turns) -->
+    <!-- Flows (1 car every 4s for N-S straight, 5s for E-W straight, 8-9s for turns) -->
     <flow id="flow_N_S" type="car" route="route_N_S" begin="0" end="3600" period="4" />
     <flow id="flow_S_N" type="car" route="route_S_N" begin="0" end="3600" period="4" />
     <flow id="flow_E_W" type="car" route="route_E_W" begin="0" end="3600" period="5" />
