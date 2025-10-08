@@ -134,7 +134,7 @@ class SumoEnvironment:
         # Get forecast data
         sim_time = self.traci_conn.simulation.getTime()
         # Round to the nearest minute (60 seconds) for lookup
-        lookup_time = int(sim_time / 60) * 60
+        lookup_time = (int(sim_time / 60) * 60) % (24 * 3600)
 
         for direction in self.directions:
             # Get demand, default to 0 if not found

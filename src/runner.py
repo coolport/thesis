@@ -32,13 +32,16 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         cfg_name = 'medium_traffic'
     sumo_cfg = f'/home/aidan/thesis/sumo/{cfg_name}.sumocfg'
     
-    # For evaluation, we don't need the forecast data, so we pass empty paths
-    # In a real test, you might want to load the corresponding forecast
-    demand_curve_files = {
-        'N': 'data/profiles/demand_curve_dummy.json', # Using dummy as placeholder
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    demand_curve_files_relative = {
+        'N': 'data/profiles/demand_curve_dummy.json',
         'S': 'data/profiles/demand_curve_dummy.json',
         'E': 'data/profiles/demand_curve_dummy.json',
         'W': 'data/profiles/demand_curve_dummy.json',
+    }
+    demand_curve_files = {
+        direction: os.path.join(project_root, path)
+        for direction, path in demand_curve_files_relative.items()
     }
 
     # Evaluation runs for a longer, fixed duration

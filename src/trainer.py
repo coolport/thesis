@@ -154,14 +154,26 @@ def main(args):
     # --- Save Model ---
     model_dir = 'models'
     os.makedirs(model_dir, exist_ok=True)
+
+    # Determine the model path
+    if args.output_path:
+        model_path = args.output_path
+        # Ensure the directory for the custom path exists
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    else:
+        if agent_name in ['dqn', 'd3qn']:
+            model_path = os.path.join(model_dir, f'{agent_name}_agent.pth')
+        else: # Q-Learning
+            model_path = os.path.join(model_dir, f'{agent_name}_agent.pkl')
+
+    # Save the model
     if agent_name in ['dqn', 'd3qn']:
-        model_path = os.path.join(model_dir, f'{agent_name}_agent.pth')
         torch.save(policy_net.state_dict(), model_path)
     else: # Q-Learning
-        model_path = os.path.join(model_dir, f'{agent_name}_agent.pkl')
         import pickle
         with open(model_path, 'wb') as f:
             pickle.dump(dict(agent.q_table), f)
+    
     print(f"Trained model saved to {model_path}")
 
     env.close()
@@ -171,5 +183,6 @@ if __name__ == '__main__':
     parser.add_argument('--agent', type=str, required=True, choices=['q-learning', 'dqn', 'd3qn'], help='The type of agent to train.')
     parser.add_argument('--episodes', type=int, default=150, help='Number of episodes to train for.')
     parser.add_argument('--gui', action='store_true', help='Enable SUMO GUI for visualization.')
+    parser.add_argument('--output-path', type=str, help='Custom path to save the trained model.')
     args = parser.parse_args()
     main(args)
