@@ -121,6 +121,7 @@ def main(args):
     env.start()
     for i_episode in range(args.episodes):
         state = env.reset()
+        total_reward = 0
         
         for t in range(500): # Limit episode length
             if agent_name in ['dqn', 'd3qn']:
@@ -130,6 +131,7 @@ def main(args):
                 action = agent.act(state)
 
             next_state, reward, done, _ = env.step(action)
+            total_reward += reward
 
             if agent_name in ['dqn', 'd3qn']:
                 memory.push(state, action_tensor, next_state, reward)
@@ -147,7 +149,7 @@ def main(args):
             if done:
                 break
         
-        print(f"Agent: {agent_name}, Episode {i_episode} finished after {t+1} steps.")
+        print(f"Agent: {agent_name}, Episode {i_episode} finished after {t+1} steps with total reward: {total_reward:.2f}")
 
     print(f'Training complete for {agent_name}.')
 

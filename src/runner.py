@@ -30,9 +30,9 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         cfg_name = 'medium_traffic_fixed'
     else:
         cfg_name = 'medium_traffic'
-    sumo_cfg = f'/home/aidan/thesis/sumo/{cfg_name}.sumocfg'
     
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sumo_cfg = os.path.join(project_root, 'sumo', f'{cfg_name}.sumocfg')
     demand_curve_files_relative = {
         'N': 'data/profiles/demand_curve_dummy.json',
         'S': 'data/profiles/demand_curve_dummy.json',
