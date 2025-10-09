@@ -1,2 +1,3 @@
 timestamp,agent_type,avg_wait_time,avg_queue_length,total_throughput
-2025-10-09T00:49:08.723282,dqn,35.27,17.30,608
+2025-10-09T09:41:19.972626,dqn,38.23,17.31,580
+2025-10-09T09:43:49.141687,dqn,213.18,24.93,578
