@@ -7,6 +7,9 @@ This script takes a prepared time-series dataset (ds, y) and generates a
 minute-by-minute 24-hour forecast, saving it as a JSON demand curve.
 """
 
+# TODO: tweak distribution. see the outputted demand curve to see imperfecitons 
+# ex late night too heavy, early morning traffic ruhs hour is fine, pero di napapantayan ng 4 to 6/7pm rush hour, then weirdly goes up later into the night..
+
 import pandas as pd
 from prophet import Prophet
 import json
@@ -43,6 +46,9 @@ def generate_forecast(input_path, output_path):
 
     # 4. Generate the forecast
     forecast = model.predict(future)
+
+    # Keep only the forecasted period (last 24 hours)
+    forecast = forecast.tail(24*60)
 
     # 5. Process and save the output
     # We only need the timestamp (ds) and the forecasted value (yhat)
