@@ -104,6 +104,16 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
                     state_tensor = torch.tensor([state], device=config.DEVICE, dtype=torch.float32)
                     action = agent(state_tensor).max(1)[1].item()
 
+            # --- Start Diagnostic Logging ---
+            if env.current_step in [5, 100, 500]:
+                print(f"\n--- DIAGNOSTIC (Step: {env.current_step}) ---")
+                print(f"  - Agent Type: {agent_type}")
+                print(f"  - Model Path: {model_path}")
+                print(f"  - State Vector: {state}")
+                print(f"  - Action Chosen: {'SWITCH' if action == 1 else 'STAY'}")
+                print(f"-------------------------------------\n")
+            # --- End Diagnostic Logging ---
+
             next_state, reward, done, info = env.step(action)
             state = next_state
             
