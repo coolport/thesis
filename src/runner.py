@@ -59,6 +59,10 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         if model_path:
             agent.load_state_dict(torch.load(model_path))
         agent.eval() # Set agent to evaluation mode (no exploration)
+        # --- DIAGNOSTIC: Print a sample of the loaded weights ---
+        if agent_type in ['dqn', 'd3qn']:
+            weight_sum = agent.state_dict()['layer1.weight'].sum().item()
+            print(f"--- DIAGNOSTIC: Sample of loaded weights (sum of first layer): {weight_sum} ---")
     elif agent_type == 'q-learning':
         agent = QLearningAgent(n_actions=config.N_ACTIONS, epsilon=0.0) # Epsilon = 0 for pure exploitation
         if model_path:
@@ -79,11 +83,19 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         total_queue_length = 0
         throughput = 0
         steps = 0
+        cumulative_reward = 0
 
         detector_ids = ['det_N', 'det_S', 'det_E', 'det_W']
 
+        # --- Decision Log Initialization ---
+        decision_log = []
+        # state[-1] is the current phase index from the environment
+        current_phase = state[-1]
+        phase_start_step = 0
+
         while not done:
             if agent_type == 'fixed-time':
+                # For fixed-time, the logic is handled by SUMO, but we can still log changes
                 action = 0 
             elif agent_type == 'q-learning':
                 action = agent.act(state)
@@ -95,13 +107,45 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
             next_state, reward, done, info = env.step(action)
             state = next_state
             
+            # --- Decision Log Logic ---
+            new_phase = state[-1]
+            if new_phase != current_phase:
+                duration = env.current_step - phase_start_step
+                decision_log.append({
+                    'step': env.current_step,
+                    'previous_phase': current_phase,
+                    'duration': duration,
+                    'action_taken': 'SWITCH' if action == 1 else 'AUTO' # Note if agent or environment forced the switch
+                })
+                current_phase = new_phase
+                phase_start_step = env.current_step
+
             # Log metrics at each step
+            cumulative_reward += reward
             total_wait_time -= reward # Reward is negative wait time
             current_queue = sum(s for s in state[:12]) # Sum of queue lengths
             total_queue_length += current_queue
             for det_id in detector_ids:
                 throughput += env.traci_conn.inductionloop.getLastStepVehicleNumber(det_id)
             steps += 1
+        
+        # --- Save Decision Log ---
+        log_output_file = 'decision_log.csv'
+        log_file_exists = os.path.isfile(log_output_file)
+        with open(log_output_file, 'a', newline='') as f:
+            # Use a DictWriter for clarity
+            fieldnames = ['agent_type', 'episode_timestamp', 'step', 'previous_phase', 'duration', 'action_taken']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            if not log_file_exists:
+                writer.writeheader()
+            
+            episode_timestamp = datetime.now().isoformat()
+            for record in decision_log:
+                record['agent_type'] = agent_type
+                record['episode_timestamp'] = episode_timestamp
+                writer.writerow(record)
+        print(f"Decision log saved to {log_output_file}")
+
 
         # --- Calculate Final Metrics ---
         avg_wait_time = total_wait_time / steps if steps > 0 else 0
@@ -112,6 +156,7 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         print(f"Average Vehicle Wait Time: {avg_wait_time:.2f} s")
         print(f"Average Queue Length: {avg_queue_length:.2f} vehicles")
         print(f"Total Throughput: {throughput} vehicles")
+        print(f"Total Reward: {cumulative_reward:.2f}")
         print("--------------------------")
 
         # --- Save to CSV ---
@@ -119,8 +164,8 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
         with open(output_file, 'a', newline='') as f:
             writer = csv.writer(f)
             if not file_exists:
-                writer.writerow(['timestamp', 'agent_type', 'avg_wait_time', 'avg_queue_length', 'total_throughput'])
-            writer.writerow([datetime.now().isoformat(), agent_type, f'{avg_wait_time:.2f}', f'{avg_queue_length:.2f}', throughput])
+                writer.writerow(['timestamp', 'agent_type', 'avg_wait_time', 'avg_queue_length', 'total_throughput', 'total_reward'])
+            writer.writerow([datetime.now().isoformat(), agent_type, f'{avg_wait_time:.2f}', f'{avg_queue_length:.2f}', throughput, f'{cumulative_reward:.2f}'])
         print(f"Results appended to {output_file}")
 
     env.close()
