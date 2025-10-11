@@ -10,7 +10,7 @@ EPS_START = 0.9        # Starting value of epsilon for epsilon-greedy action sel
 EPS_END = 0.05         # Final value of epsilon
 EPS_DECAY = 1000       # Controls the rate of exponential decay of epsilon
 TAU = 0.005            # Update rate of the target network
-LR = 1e-4              # Learning rate of the AdamW optimizer
+LR = 1e-5              # Learning rate of the AdamW optimizer
 
 # --- Environment Configuration ---
 # Define the directory for SUMO configurations
