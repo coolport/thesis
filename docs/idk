@@ -1,0 +1,23 @@
+ if im not mistaken, the prophet output/forecasting should be done per direction right? like
+  northbound southbound westboun eastbound. is that mentioend somewhere in docs? i dont think ive
+  implemenmted that yet. do not do it yourself. im just asking for refernce. @docs/
+  @src/forecasting.py
+
+✦ Yes, you are absolutely correct. Your documentation clearly states that the forecasting should be
+  done per direction.
+
+  Specifically, in docs/0924_pipeline_overview.md, under Phase 1, Step 2: Generate the "Expected
+  Demand Curves", it says:
+
+  > -   We run our prophet_forecaster.py script four times, once on each of the prophet_input_*.csv
+  files.
+  > -   Output: Four demand_curve_*.json files (e.g., demand_curve_north.json).
+
+  Your current implementation does not do this. The src/forecasting.py script takes a single input
+  and produces a single output. The runner.py and trainer.py scripts then use this one "dummy"
+  forecast file for all four directions.
+
+  This is another significant bug in the pipeline that we have just uncovered. It is very likely a
+  contributing factor to the identical results, as all four "proactive" components of the agent's
+  state vector are receiving the exact same forecast data. The agent isn't getting directional
+  information about the future, which would severely limit its ability to learn a nuanced strategy.
