@@ -1,3 +1,35 @@
+
+<!-- > if the turning profile is not gonna be used. how will the simulation how turnings go anyway, in evaluation etc -->
+<!---->
+<!-- ✦ That is an excellent and crucial question. You've pinpointed the distinction between the different phases of the project. -->
+<!---->
+<!--   The answer is that the simulation knows the turning movements because they are already pre-defined in the route file that we are using for this experiment: sumo/medium_traffic.rou.xml. -->
+<!---->
+<!--   Let me clarify the two separate workflows: -->
+<!---->
+<!--   Workflow 1: Training & Evaluation (Our Current Task) -->
+<!---->
+<!--   In this workflow, we use an existing, fully defined traffic scenario. -->
+<!---->
+<!--    1. The runner.py script loads the simulation configuration file (sumo/medium_traffic.sumocfg). -->
+<!--    2. This configuration file tells SUMO to load the network (test.net.xml) and, most importantly, the route file (medium_traffic.rou.xml). -->
+<!--    3. This .rou.xml file contains explicit definitions for vehicle routes, which directly specify all the turning movements. For example, it has entries like <vehicle id="..." depart="..." -->
+<!--       type="car"><route edges="from_north_edge to_east_edge"/></vehicle>, which tells a car exactly how to make a turn. -->
+<!---->
+<!--   In this case, the standard_turning_profile.json is never used. The simulation gets all of its routing information directly from the .rou.xml file. -->
+<!---->
+<!--   Workflow 2: Zero-Shot Deployment (Future Task) -->
+<!---->
+<!--   This is the only time the standard_turning_profile.json is used. -->
+<!---->
+<!--    1. Imagine you have a new intersection, and you do not have a pre-made .rou.xml file. All you have is a single number, like the total daily traffic volume. -->
+<!--    2. This is where the turning profile becomes essential. A script would use the standard_turning_profile.json to intelligently guess the turning ratios. -->
+<!--    3. It would then use these ratios to generate a brand new `.rou.xml` file from scratch. -->
+<!--    4. The simulation would then run using that newly generated route file. -->
+<!---->
+<!--   So, to summarize: The turning profile is a tool to *create* a route file when you don't have one. Since we already have `medium_traffic.rou.xml` for our current experiment, the turning -->
+<!--   profile is not needed. -->
+
 <routes>
     <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" maxSpeed="70"/>
 
