@@ -23,3 +23,23 @@ N_ACTIONS = 2       # STAY or SWITCH
 
 # --- Hardware Configuration ---
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# --- File Paths ---
+DATA_DIR = 'data'
+PROFILES_DIR = f'{DATA_DIR}/profiles'
+
+# Point to the newly generated realistic, per-direction data files
+FORECAST_INPUT_PATHS = {
+    'N': f'{DATA_DIR}/prophet_input_N.csv',
+    'S': f'{DATA_DIR}/prophet_input_S.csv',
+    'E': f'{DATA_DIR}/prophet_input_E.csv',
+    'W': f'{DATA_DIR}/prophet_input_W.csv',
+}
+
+# The output files for the generated demand curves
+FORECAST_OUTPUT_PATHS = {
+    'N': f'{PROFILES_DIR}/demand_curve_N.json',
+    'S': f'{PROFILES_DIR}/demand_curve_S.json',
+    'E': f'{PROFILES_DIR}/demand_curve_E.json',
+    'W': f'{PROFILES_DIR}/demand_curve_W.json',
+}

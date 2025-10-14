@@ -75,25 +75,55 @@ def optimize_model_pytorch(agent_type, policy_net, target_net, memory, optimizer
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
 
+import sys
+import subprocess
+
+def _generate_all_forecasts(project_root):
+    """Generates all four directional forecasts by calling the forecasting script."""
+    print("--- Generating Directional Forecasts ---")
+    # Use absolute path for the forecasting script
+    forecasting_script_path = os.path.join(project_root, 'src', 'forecasting.py')
+    
+    for direction in config.FORECAST_INPUT_PATHS.keys():
+        input_path = os.path.join(project_root, config.FORECAST_INPUT_PATHS[direction])
+        output_path = os.path.join(project_root, config.FORECAST_OUTPUT_PATHS[direction])
+        
+        command = [
+            sys.executable, # Use the current python interpreter
+            forecasting_script_path,
+            '--input',
+            input_path,
+            '--output',
+            output_path
+        ]
+        
+        print(f"Running command: {' '.join(command)}")
+        try:
+            # Using subprocess.run to execute the command
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            print(result.stdout) # Print the output from the forecasting script
+        except subprocess.CalledProcessError as e:
+            print(f"Error generating forecast for {direction}:")
+            print(e.stderr)
+            # Exit on error to prevent training with missing/stale forecasts
+            raise e
+
 def main(args):
     # --- Path Setup for Cross-Platform Compatibility ---
     # Get the absolute path to the project root
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+    # --- Generate Forecasts before starting anything else ---
+    _generate_all_forecasts(project_root)
+
     # --- Environment and Agent Initialization ---
-    cfg_name = 'medium_traffic'
+    cfg_name = 'real_traffic'
     sumo_config_path = os.path.join(project_root, config.SUMO_CONFIG_DIR, f'{cfg_name}.sumocfg')
 
-    demand_curve_files_relative = {
-        'N': 'data/profiles/demand_curve_dummy.json',
-        'S': 'data/profiles/demand_curve_dummy.json',
-        'E': 'data/profiles/demand_curve_dummy.json',
-        'W': 'data/profiles/demand_curve_dummy.json',
-    }
-    # Construct absolute paths for demand curve files
+    # Construct absolute paths for demand curve files from config
     demand_curve_files_absolute = {
         direction: os.path.join(project_root, path)
-        for direction, path in demand_curve_files_relative.items()
+        for direction, path in config.FORECAST_OUTPUT_PATHS.items()
     }
 
     env = SumoEnvironment(

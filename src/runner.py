@@ -14,6 +14,9 @@ import argparse
 import pickle
 from collections import defaultdict
 from datetime import datetime
+import subprocess
+import sys
+import config
 
 # Import agent classes
 from dqn_agent import DQN
@@ -21,27 +24,46 @@ from d3qn_agent import D3QN
 from q_learning_agent import QLearningAgent
 
 from sumo_environment import SumoEnvironment
-import config
+
+def _generate_all_forecasts(project_root):
+    """Generates all four directional forecasts by calling the forecasting script."""
+    print("--- Generating Directional Forecasts ---")
+    forecasting_script_path = os.path.join(project_root, 'src', 'forecasting.py')
+    
+    for direction in config.FORECAST_INPUT_PATHS.keys():
+        input_path = os.path.join(project_root, config.FORECAST_INPUT_PATHS[direction])
+        output_path = os.path.join(project_root, config.FORECAST_OUTPUT_PATHS[direction])
+        
+        command = [sys.executable, forecasting_script_path, '--input', input_path, '--output', output_path]
+        
+        print(f"Running command: {' '.join(command)}")
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            print(result.stdout)
+        except subprocess.CalledProcessError as e:
+            print(f"Error generating forecast for {direction}:")
+            print(e.stderr)
+            raise e
 
 def run_evaluation(agent_type, model_path, gui, episodes, output_file):
     """Runs a full evaluation for a given agent."""
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # --- Generate Forecasts before starting anything else ---
+    _generate_all_forecasts(project_root)
+
     # --- Environment and Agent Initialization ---
     if agent_type == 'fixed-time':
-        cfg_name = 'medium_traffic_fixed'
+        cfg_name = 'real_traffic_fixed'
     else:
-        cfg_name = 'medium_traffic'
+        cfg_name = 'real_traffic'
     
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sumo_cfg = os.path.join(project_root, 'sumo', f'{cfg_name}.sumocfg')
-    demand_curve_files_relative = {
-        'N': 'data/profiles/demand_curve_dummy.json',
-        'S': 'data/profiles/demand_curve_dummy.json',
-        'E': 'data/profiles/demand_curve_dummy.json',
-        'W': 'data/profiles/demand_curve_dummy.json',
-    }
+    
+    # Construct absolute paths for demand curve files from config
     demand_curve_files = {
         direction: os.path.join(project_root, path)
-        for direction, path in demand_curve_files_relative.items()
+        for direction, path in config.FORECAST_OUTPUT_PATHS.items()
     }
 
     # Evaluation runs for a longer, fixed duration
@@ -133,7 +155,8 @@ def run_evaluation(agent_type, model_path, gui, episodes, output_file):
             # Log metrics at each step
             cumulative_reward += reward
             total_wait_time -= reward # Reward is negative wait time
-            current_queue = sum(s for s in state[:12]) # Sum of queue lengths
+            # Use the raw queue length from the info dict for accurate metrics
+            current_queue = info.get('raw_queue_length', 0)
             total_queue_length += current_queue
             for det_id in detector_ids:
                 throughput += env.traci_conn.inductionloop.getLastStepVehicleNumber(det_id)
