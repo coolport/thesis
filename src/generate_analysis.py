@@ -18,13 +18,13 @@ HTML_TEMPLATE = """
 </html>
 """
 
-def main(output_file):
-    """Reads the results.csv file, performs all analyses, and generates an HTML report."""
+def main(input_file, output_file):
+    """Reads a results CSV file, performs all analyses, and generates an HTML report."""
     try:
-        df = pd.read_csv('results.csv')
+        df = pd.read_csv(input_file)
         df = df.set_index('agent_type')
     except FileNotFoundError:
-        print("Error: results.csv not found. Please run the evaluation experiments first.")
+        print(f"Error: {input_file} not found. Please run the evaluation experiments first.")
         return
 
     metrics = {
@@ -253,7 +253,8 @@ def main(output_file):
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description='Generate analysis report from results.csv.')
+    parser = argparse.ArgumentParser(description='Generate analysis report from a results CSV file.')
+    parser.add_argument('--input', type=str, default='results.csv', help='Path to the input results CSV file.')
     parser.add_argument('--output', type=str, default='analysis_report.html', help='Path to the output HTML file.')
     args = parser.parse_args()
-    main(args.output)
+    main(args.input, args.output)
