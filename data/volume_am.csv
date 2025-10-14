@@ -1,0 +1,18 @@
+LANE,Car,Puj,UV,Taxi,Pub,Truck,Trike,Motorcycle,Tricycle,TOTAL
+1 South_Westbound,246,0,7,10,2,1,0,272,0,538
+1a South_Southbound_Uturn,32,0,0,8,2,0,0,102,0,144
+2 South_Northbound,207,0,24,91,6,2,9,413,0,743
+2a South_Northbound_Underpass,1880,0,0,94,9,33,0,1831,0,3847
+2b South_Northbound_UnderpassBuslane,4,0,0,0,47,0,0,20,0,71
+3 South_Eastbound,14,0,0,3,9,0,0,25,0,51
+4 North_Eastbound,263,0,1,44,11,5,0,363,0,687
+4a North_Northbound_Uturn,68,0,0,51,30,5,0,81,0,235
+5 North_Southbound,878,0,0,84,0,12,1,1608,0,2583
+5a North_Southbound_Underpass,973,0,1,15,2,20,0,2649,0,3660
+5b North_Southbound_UnderpassBuslane,0,0,0,0,64,0,0,0,0,64
+6 North_Westbound,46,0,0,22,0,0,0,56,0,124
+8 West_Eastbound,698,221,6,99,6,6,0,763,5,1804
+9 West_Southbound,52,0,0,24,3,2,0,94,0,175
+11 East_Westbound,786,259,4,104,8,15,0,1197,17,2390
+12 East_Northbound,111,0,0,57,1,2,0,185,0,356
+TOTAL,6258,480,43,706,200,103,10,9659,22,17472

@@ -1,22 +1,22 @@
 {
-    "S": {
-        "straight": 0.9234,
-        "left": 0.0696,
-        "right": 0.0069
-    },
     "N": {
-        "straight": 0.0,
-        "left": 0.9224,
-        "right": 0.0776
+        "straight": 0.7,
+        "left": 0.1717,
+        "right": 0.0242
+    },
+    "S": {
+        "straight": 0.5102,
+        "left": 0.3383,
+        "right": 0.0449
     },
     "E": {
-        "straight": 1.0,
-        "left": 0.0,
+        "straight": 0.8455,
+        "left": 0.1545,
         "right": 0.0
     },
     "W": {
-        "straight": 0,
-        "left": 0,
-        "right": 0
+        "straight": 0.915,
+        "left": 0.085,
+        "right": 0.0
     }
 }
