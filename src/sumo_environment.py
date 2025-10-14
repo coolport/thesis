@@ -48,6 +48,11 @@ class SumoEnvironment:
         # Directions corresponding to the forecast
         self.directions = ['N', 'S', 'E', 'W']
 
+        # Normalization constants
+        self.MAX_QUEUE_LENGTH = 50.0  # Estimated max vehicles in a lane
+        self.MAX_FORECAST_DEMAND = 4000.0 # Estimated max forecast value from data
+        self.NUM_PHASES = 4.0 # Total number of phases in the traffic light cycle
+
     def _load_demand_curves(self, demand_curve_files):
         """Loads demand curve JSON files into a lookup dictionary."""
         curves = {}
@@ -120,18 +125,24 @@ class SumoEnvironment:
         reward = self._calculate_reward()
         done = self.current_step >= self.steps_per_episode
 
-        return next_state, reward, done, {}
+        # 4. Pass raw metrics for logging
+        info = {
+            'raw_queue_length': sum(self.traci_conn.lane.getLastStepHaltingNumber(lane_id) for lane_id in self.incoming_lanes)
+        }
+
+        return next_state, reward, done, info
 
     def _get_state(self):
         """
-        Retrieves the current state of the environment from SUMO.
+        Retrieves and NORMALIZES the current state of the environment from SUMO.
         """
         state = []
-        # Get queue length for each incoming lane
+        # Get queue length for each incoming lane and normalize it
         for lane_id in self.incoming_lanes:
-            state.append(self.traci_conn.lane.getLastStepHaltingNumber(lane_id))
+            queue_length = self.traci_conn.lane.getLastStepHaltingNumber(lane_id)
+            state.append(queue_length / self.MAX_QUEUE_LENGTH)
         
-        # Get forecast data
+        # Get forecast data and normalize it
         sim_time = self.traci_conn.simulation.getTime()
         # Round to the nearest minute (60 seconds) for lookup
         lookup_time = (int(sim_time / 60) * 60) % (24 * 3600)
@@ -139,11 +150,11 @@ class SumoEnvironment:
         for direction in self.directions:
             # Get demand, default to 0 if not found
             demand = self.demand_curves[direction].get(lookup_time, 0)
-            state.append(demand)
+            state.append(demand / self.MAX_FORECAST_DEMAND)
         
-        # Get traffic light phase
+        # Get traffic light phase and normalize it
         current_phase = self.traci_conn.trafficlight.getPhase(self.ts_id)
-        state.append(current_phase)
+        state.append(current_phase / self.NUM_PHASES)
 
         return state
 
