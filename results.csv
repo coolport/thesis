@@ -1,0 +1,2 @@
+timestamp,agent_type,avg_wait_time,avg_queue_length,total_throughput,total_reward
+2025-10-16T17:54:12.679934,dqn,56.63,9.54,425,-40771.00
